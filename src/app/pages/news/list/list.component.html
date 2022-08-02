@@ -1,0 +1,90 @@
+<div class="absolute inset-0 flex flex-col min-w-0">
+  <div class="flex flex-col flex-auto p-6 md:p-8">
+    <div class="flex items-center">
+      <div class="flex items-center flex-auto">
+        <mat-form-field class="dime-mat-rounded dime-mat-dense dime-mat-no-subscript flex-auto ml-4 lg:ml-0">
+          <mat-icon
+            class="icon-size-5"
+            [svgIcon]="'heroicons_solid:search'"
+            matPrefix></mat-icon>
+          <input
+            matInput
+            [autocomplete]="'off'"
+            [placeholder]="'Поиск новостей'"
+            (input)="filterByQuery(searchInput.value)"
+            #searchInput>
+        </mat-form-field>
+      </div>
+      <button
+        class="ml-4 px-1 sm:px-4 min-w-10"
+        mat-flat-button
+        [color]="'primary'"
+        (click)="addNewNews()">
+        <mat-icon
+          class="icon-size-5"
+          [svgIcon]="'heroicons_solid:plus-circle'"></mat-icon>
+        <span class="hidden sm:inline-block ml-2">Добавить новость</span>
+      </button>
+    </div>
+
+    <ng-container *ngIf="(news$ | async) as news; else loading">
+      <ng-container *ngIf="news.length; else noNews">
+
+        <masonry
+          class="-mx-2 mt-8"
+          [items]="news"
+          [columns]="masonryColumns"
+          [columnsTemplate]="columnsTemplate">
+          <ng-template
+            #columnsTemplate
+            let-columns>
+            <ng-container *ngFor="let column of columns; trackBy: trackByFn">
+              <div class="flex-1 px-2 space-y-4">
+                <ng-container *ngFor="let newsItem of column.items; trackBy: trackByFn">
+                  <div
+                    class="flex flex-col shadow rounded-2xl overflow-hidden cursor-pointer bg-card"
+                    (click)="openNewsItemDialog(newsItem)">
+                    <ng-container *ngIf="newsItem.titleImageUrl">
+                      <img
+                        class="w-full object-cover"
+                        [src]="newsItem.titleImageUrl">
+                    </ng-container>
+                    <div class="flex flex-auto flex-col p-6 space-y-4">
+                      <ng-container *ngIf="newsItem.title">
+                        <div class="font-semibold line-clamp-3">
+                          {{newsItem.title}}
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="newsItem.description">
+                        <div [class.text-xl]="newsItem.description.length < 70">
+                          {{newsItem.description}}
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </ng-container>
+          </ng-template>
+        </masonry>
+
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loading>
+      <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+        <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">Загрузка...</div>
+      </div>
+    </ng-template>
+
+    <ng-template #noNews>
+      <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+        <mat-icon
+          class="icon-size-24"
+          [svgIcon]="'heroicons_outline:document'"></mat-icon>
+        <div class="mt-4 text-2xl font-semibold tracking-tight text-secondary">Нет ни одной новости!</div>
+      </div>
+    </ng-template>
+
+  </div>
+</div>

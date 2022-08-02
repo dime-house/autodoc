@@ -1,0 +1,81 @@
+<div class="flex flex-col flex-auto md:w-160 md:min-w-160 -m-6">
+  <ng-container *ngIf="(newsItem$ | async) as newsItem">
+    <ng-container *ngIf="newsItem.titleImageUrl">
+      <div class="relative w-full">
+        <div class="absolute right-0 bottom-0 p-4">
+          <button
+            mat-icon-button
+            (click)="removeImage(newsItem)">
+            <mat-icon
+              class="text-white"
+              [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+          </button>
+        </div>
+        <img
+          class="w-full object-cover"
+          [src]="newsItem.titleImageUrl">
+      </div>
+    </ng-container>
+    <div class="m-4">
+      <div>
+        <input
+          class="w-full p-2 text-2xl"
+          [placeholder]="'Название'"
+          [(ngModel)]="newsItem.title"
+          (input)="updateNewsDetails(newsItem)">
+      </div>
+      <div class="flex w-full py-5 px-2">
+                <textarea
+                  class="w-full"
+                  [placeholder]="'Описание'"
+                  [(ngModel)]="newsItem.text"
+                  (input)="updateNewsDetails(newsItem)"
+                  matTextareaAutosize></textarea>
+      </div>
+      <ng-container *ngIf="!newsItem.id">
+        <div class="flex items-center justify-end mt-4">
+          <button
+            mat-flat-button
+            [color]="'primary'"
+            [disabled]="!newsItem.title && !newsItem.text"
+            (click)="createNews(newsItem)">
+            Сохранить
+          </button>
+        </div>
+      </ng-container>
+      <!-- Edit Actions -->
+      <ng-container *ngIf="newsItem.id">
+        <div class="flex items-center justify-between mt-4">
+          <div class="flex items-center space-x-2">
+            <div>
+              <input
+                id="image-file-input"
+                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                type="file"
+                [multiple]="false"
+                [accept]="'image/jpeg, image/png'"
+                (change)="uploadImage(newsItem, imageFileInput.files)"
+                #imageFileInput>
+              <label
+                class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-gray-400 hover:bg-opacity-20 dark:hover:bg-black dark:hover:bg-opacity-5"
+                for="image-file-input"
+                matRipple>
+                <mat-icon [svgIcon]="'heroicons_outline:photograph'"></mat-icon>
+              </label>
+            </div>
+            <button
+              mat-icon-button
+              (click)="deleteNews(newsItem)">
+              <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+            </button>
+          </div>
+          <button
+            mat-flat-button
+            matDialogClose>
+            Закрыть
+          </button>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+</div>
